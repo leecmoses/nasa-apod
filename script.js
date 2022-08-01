@@ -47,8 +47,13 @@ const createDOMNodes = (page) => {
     // Save Text
     const saveText = document.createElement("p");
     saveText.classList.add("clickable");
-    saveText.textContent = "Add to Favorites";
-    saveText.setAttribute("onclick", `saveFavorite('${apod.url}')`);
+    if (page === "results") {
+      saveText.textContent = "Add to Favorites";
+      saveText.setAttribute("onclick", `saveFavorite('${apod.url}')`);
+    } else {
+      saveText.textContent = "Remove From Favorites";
+      saveText.setAttribute("onclick", `removeFavorite('${apod.url}')`);
+    }
 
     // Card Text
     const cardText = document.createElement("p");
@@ -83,7 +88,7 @@ const updateDOM = (page) => {
     favorites = JSON.parse(localStorage.getItem("nasaFavorites"));
     console.log("favorites from localStorage", favorites);
   }
-
+  imagesContainer.textContent = "";
   createDOMNodes(page);
 };
 
@@ -113,6 +118,15 @@ const saveFavorite = (itemUrl) => {
       localStorage.setItem("nasaFavorites", JSON.stringify(favorites));
     }
   });
+};
+
+const removeFavorite = (itemUrl) => {
+  if (favorites[itemUrl]) {
+    delete favorites[itemUrl];
+    // Set Favorites in localStorage
+    localStorage.setItem("nasaFavorites", JSON.stringify(favorites));
+    updateDOM("favorites");
+  }
 };
 
 // Onload
